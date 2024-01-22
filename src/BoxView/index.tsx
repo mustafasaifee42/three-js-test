@@ -1,9 +1,19 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import BoxViewCanvas from "./BoxViewCanvas";
-import { Datatype } from "../Types";
+import { CtxDataType, Datatype } from "../Types";
+import Context from "../Context/Context";
 
-export function BoxView() {
-  
+interface Props {
+  fileName: string;
+  colors: [string, string];
+}
+
+export function BoxView(props: Props) {
+    const { fileName, colors } = props;
+    const {
+      x,
+      y,
+    } = useContext(Context) as CtxDataType;
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
     const [data, setData] = useState<Datatype | undefined>(undefined);
@@ -19,7 +29,7 @@ export function BoxView() {
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const response = await fetch('./data/minified.json'); // Adjust the path accordingly
+          const response = await fetch(`./data/${fileName}`); // Adjust the path accordingly
           const data = await response.json();
           setData(data);
         } catch (error) {
@@ -28,7 +38,7 @@ export function BoxView() {
       };
   
       fetchData();
-    }, []);
+    }, [fileName]);
     return (
       <div 
         ref={graphDiv} 
@@ -37,11 +47,28 @@ export function BoxView() {
           height: '50vh',
         }}>
         {width && height && data ? (
-          <BoxViewCanvas
-            width={width}
-            height={height}
-            data={data}
-          />
+          <>
+            {
+              x !== undefined && y !== undefined ?
+              <div style={{
+                padding: '0.5rem',
+                backgroundColor: 'rgba(255,255,255,0.75)',
+                position: 'absolute',
+                zIndex: '10',
+                margin: '1rem 0 0 1rem',
+              }}>
+                <p>X: {x}</p>
+                <p>Y: {y}</p>
+                <p>Value: {data.data[y * data.res_x + x]} </p>
+              </div> : null
+            }
+            <BoxViewCanvas
+              width={width}
+              height={height}
+              data={data}
+              colors={colors}
+            />
+          </>
         ) : null}
       </div>
     );
