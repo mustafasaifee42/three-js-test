@@ -6,10 +6,11 @@ import Context from "../Context/Context";
 interface Props {
   fileName: string;
   colors: [string, string];
+  grayScaleData: Datatype;
 }
 
 export function BoxView(props: Props) {
-    const { fileName, colors } = props;
+    const { fileName, colors, grayScaleData } = props;
     const {
       x,
       y,
@@ -67,6 +68,7 @@ export function BoxView(props: Props) {
               height={height}
               data={data}
               colors={colors}
+              grayScaleData={grayScaleData}
             />
           </>
         ) : null}

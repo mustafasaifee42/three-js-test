@@ -12,6 +12,7 @@ interface Props {
   height: number;
   data: Datatype;
   colors: [string, string];
+  grayScaleData: Datatype;
 }
 
 const BoxViewCanvas = (props: Props) => {
@@ -20,8 +21,12 @@ const BoxViewCanvas = (props: Props) => {
     height,
     data,
     colors,
+    grayScaleData
   } = props
   const graphDiv = useRef<HTMLDivElement>(null);
+  const grayScaleColorScale = scaleLinear<string, string>()
+    .domain([0, 1])
+    .range(['#252525', '#f7f7f7']);
   const colorScale = scaleLinear<string, string>()
     .domain([0, 1])
     .range(colors);
@@ -36,16 +41,25 @@ const BoxViewCanvas = (props: Props) => {
   
       const geometry = new THREE.PlaneGeometry( 0.01, 0.01 );
       const material = new THREE.MeshBasicMaterial();
-      const mesh  = new THREE.InstancedMesh(geometry, material, data.res_x * data.res_y);
+      const mesh  = new THREE.InstancedMesh(geometry, material, data.data.length);
       scene.add(mesh)
       const planes  = new THREE.Object3D()
       for (let  i = 0; i < data.res_x * data.res_y; i = i + 1) {
-        planes.position.x = -5 + ((i % data.res_y) * 0.01);
-        planes.position.y = 2.5 - (Math.floor(i / data.res_y) * 0.01);
-        planes.position.z = 0;
-        planes.updateMatrix()
-        mesh.setMatrixAt(i, planes.matrix)
-        mesh.setColorAt(i, new THREE.Color(data.data[i] === -1 ? '#000000' : colorScale(data.data[i])))
+        if(data.data[i] !== -1) {
+          planes.position.x = -5 + ((i % data.res_y) * 0.01);
+          planes.position.y = 2.5 - (Math.floor(i / data.res_y) * 0.01);
+          planes.position.z = 0;
+          planes.updateMatrix()
+          mesh.setMatrixAt(i, planes.matrix)
+          mesh.setColorAt(i, new THREE.Color(colorScale(data.data[i])))
+        } else {
+          planes.position.x = -5 + ((i % data.res_y) * 0.01);
+          planes.position.y = 2.5 - (Math.floor(i / data.res_y) * 0.01);
+          planes.position.z = 0;
+          planes.updateMatrix()
+          mesh.setMatrixAt(i, planes.matrix)
+          mesh.setColorAt(i, new THREE.Color(grayScaleColorScale(grayScaleData.data[i])))
+        }
       }
       const controls = new MapControls( camera, window.document.body);
 
