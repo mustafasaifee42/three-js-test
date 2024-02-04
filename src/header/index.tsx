@@ -1,9 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Select } from "antd";
-import { useState } from "react"
 
 function Header(){
-  const [age, setAge] = useState(10);
   return (
     <div style={{
       width: '20%',
