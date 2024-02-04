@@ -3,6 +3,8 @@ import { BoxView } from './BoxView';
 import Reducer from './Context/Reducer';
 import Context from './Context/Context';
 import { Datatype } from './Types';
+import { Spin } from 'antd';
+import Header from './header';
 
 function App() {
   const initialState = {
@@ -45,17 +47,22 @@ function App() {
       style={{
         display: 'flex',
         flexWrap: 'wrap',
-        gap: '1px',
         width: '100vw',
       }}
     >
-      <Context.Provider
-        value={{
-          ...state,
-          updateY,
-          updateX,
-        }}
-      >
+    <Header />
+    <Context.Provider
+      value={{
+        ...state,
+        updateY,
+        updateX,
+      }}
+    >
+      <div style={{
+        width: '80%',
+        display: 'flex',
+        flexWrap: 'wrap',
+      }}>
         {
           grayScaleData ? (
             <>          
@@ -92,8 +99,9 @@ function App() {
                 <BoxView fileName='Iron.json' colors={['#feedde', '#a63603']} grayScaleData={grayScaleData} />
               </div>
             </>
-          ) : null
+          ) : <Spin tip="Loading" size="large" />
         }
+      </div>
     </Context.Provider>
     </div>
   )
